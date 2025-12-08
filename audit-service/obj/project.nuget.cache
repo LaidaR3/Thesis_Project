@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "vzlIkIWRvPM=",
+  "success": true,
+  "projectFilePath": "/Users/laidarusinovci/Desktop/Tema e Diplomes/Thesis_Project/audit-service/audit-service.csproj",
+  "expectedPackageFiles": [
+    "/Users/laidarusinovci/.nuget/packages/microsoft.aspnetcore.openapi/10.0.0/microsoft.aspnetcore.openapi.10.0.0.nupkg.sha512",
+    "/Users/laidarusinovci/.nuget/packages/microsoft.openapi/2.0.0/microsoft.openapi.2.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
