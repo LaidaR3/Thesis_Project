@@ -42,3 +42,14 @@
 /Users/laidarusinovci/Desktop/Tema e Diplomes/Thesis_Project/api-gateway/obj/Debug/net10.0/api-gateway.pdb
 /Users/laidarusinovci/Desktop/Tema e Diplomes/Thesis_Project/api-gateway/obj/Debug/net10.0/api-gateway.genruntimeconfig.cache
 /Users/laidarusinovci/Desktop/Tema e Diplomes/Thesis_Project/api-gateway/obj/Debug/net10.0/ref/api-gateway.dll
+/Users/laidarusinovci/Desktop/Tema e Diplomes/Thesis_Project/api-gateway/bin/Debug/net10.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/Users/laidarusinovci/Desktop/Tema e Diplomes/Thesis_Project/api-gateway/bin/Debug/net10.0/Microsoft.IdentityModel.Abstractions.dll
+/Users/laidarusinovci/Desktop/Tema e Diplomes/Thesis_Project/api-gateway/bin/Debug/net10.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/Users/laidarusinovci/Desktop/Tema e Diplomes/Thesis_Project/api-gateway/bin/Debug/net10.0/Microsoft.IdentityModel.Logging.dll
+/Users/laidarusinovci/Desktop/Tema e Diplomes/Thesis_Project/api-gateway/bin/Debug/net10.0/Microsoft.IdentityModel.Protocols.dll
+/Users/laidarusinovci/Desktop/Tema e Diplomes/Thesis_Project/api-gateway/bin/Debug/net10.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+/Users/laidarusinovci/Desktop/Tema e Diplomes/Thesis_Project/api-gateway/bin/Debug/net10.0/Microsoft.IdentityModel.Tokens.dll
+/Users/laidarusinovci/Desktop/Tema e Diplomes/Thesis_Project/api-gateway/bin/Debug/net10.0/Swashbuckle.AspNetCore.Swagger.dll
+/Users/laidarusinovci/Desktop/Tema e Diplomes/Thesis_Project/api-gateway/bin/Debug/net10.0/Swashbuckle.AspNetCore.SwaggerGen.dll
+/Users/laidarusinovci/Desktop/Tema e Diplomes/Thesis_Project/api-gateway/bin/Debug/net10.0/Swashbuckle.AspNetCore.SwaggerUI.dll
+/Users/laidarusinovci/Desktop/Tema e Diplomes/Thesis_Project/api-gateway/bin/Debug/net10.0/System.IdentityModel.Tokens.Jwt.dll
