@@ -53,14 +53,40 @@ namespace AuthService.Controllers
             if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
                 return BadRequest("Invalid email or password.");
 
-            var token = _jwt.GenerateToken(user.Email, user.Role);
+            // FIXED: Pass the full User object
+            var token = _jwt.GenerateToken(user);
 
             return Ok(new
             {
                 token = token,
                 email = user.Email,
-                role = user.Role
+                role = user.Role,
+                id = user.Id
             });
         }
+
+        [HttpPost("create-admin")]
+public IActionResult CreateAdmin(RegisterDto dto)
+{
+    // Check if admin already exists
+    var exists = _context.Users.FirstOrDefault(x => x.Email == dto.Email);
+    if (exists != null)
+        return BadRequest("User with this email already exists.");
+
+    var admin = new User
+    {
+        FirstName = dto.FirstName,
+        LastName = dto.LastName,
+        Email = dto.Email,
+        PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+        Role = "Admin"
+    };
+
+    _context.Users.Add(admin);
+    _context.SaveChanges();
+
+    return Ok(new { message = "Admin created successfully!" });
+}
+
     }
 }
