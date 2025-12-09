@@ -12,18 +12,33 @@
       "UpstreamPathTemplate": "/gateway/data/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST" ]
     },
+
     {
-      "DownstreamPathTemplate": "/api/auth/users/{everything}",
+      "DownstreamPathTemplate": "/api/auth/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5240        
+          "Port": 5240
         }
       ],
-      "UpstreamPathTemplate": "/gateway/auth/users/{everything}",
+      "UpstreamPathTemplate": "/gateway/auth/{everything}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    },
+
+    {
+      "DownstreamPathTemplate": "/api/userprofiles",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5214
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/user/userprofiles",
+      "UpstreamHttpMethod": [ "GET" ]
     }
   ],
-  "GlobalConfiguration": { }
+
+  "GlobalConfiguration": {}
 }
