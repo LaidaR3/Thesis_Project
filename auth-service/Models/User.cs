@@ -1,4 +1,4 @@
-namespace AuthService.Models
+namespace auth_service.Models
 {
     public class User
     {
@@ -8,5 +8,7 @@ namespace AuthService.Models
         public required string Email { get; set; }
         public required string PasswordHash { get; set; }
         public required string Role { get; set; } = "User";
+
+        public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
     }
 }

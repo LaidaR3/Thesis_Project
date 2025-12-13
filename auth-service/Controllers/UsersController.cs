@@ -2,7 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AuthService.Data;
-using AuthService.Models;
+using auth_service.Models;
+
 
 namespace auth_service.Controllers
   
