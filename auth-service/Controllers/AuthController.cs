@@ -34,60 +34,84 @@ namespace AuthService.Controllers
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 Email = dto.Email,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                Role = "User"
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
             };
 
             _context.Users.Add(user);
             _context.SaveChanges();
 
+            var userRole = new UserRole
+            {
+                UserId = user.Id,
+                RoleId = 2 // User
+            };
+
+            _context.UserRoles.Add(userRole);
+            _context.SaveChanges();
+
             return Ok(new { message = "User registered successfully" });
         }
+
 
         [HttpPost("login")]
         public IActionResult Login(LoginDto dto)
         {
-            var user = _context.Users.FirstOrDefault(x => x.Email == dto.Email);
+            var user = _context.Users
+                .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                .FirstOrDefault(x => x.Email == dto.Email);
+        
             if (user == null)
                 return BadRequest("Invalid email or password.");
-
+        
             if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
                 return BadRequest("Invalid email or password.");
-
-            // FIXED: Pass the full User object
+        
             var token = _jwt.GenerateToken(user);
-
+        
             return Ok(new
             {
-                token = token,
+                token,
                 email = user.Email,
-                role = user.Role,
+                roles = user.UserRoles.Select(ur => ur.Role.Name),
                 id = user.Id
             });
         }
+        
+        
+        
+        
 
         [HttpPost("create-admin")]
-public IActionResult CreateAdmin(RegisterDto dto)
-{
-    // Check if admin already exists
-    var exists = _context.Users.FirstOrDefault(x => x.Email == dto.Email);
-    if (exists != null)
-        return BadRequest("User with this email already exists.");
+        public IActionResult CreateAdmin(RegisterDto dto)
+        {
+            var exists = _context.Users.FirstOrDefault(x => x.Email == dto.Email);
+            if (exists != null)
+                return BadRequest("User with this email already exists.");
 
-    var admin = new User
-    {
-        FirstName = dto.FirstName,
-        LastName = dto.LastName,
-        Email = dto.Email,
-        PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-        Role = "Admin"
-    };
+            var admin = new User
+            {
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Email = dto.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
+            };
 
-    _context.Users.Add(admin);
-    _context.SaveChanges();
+            _context.Users.Add(admin);
+            _context.SaveChanges();
 
-    return Ok(new { message = "Admin created successfully!" });
-}
+            var adminRole = new UserRole
+            {
+                UserId = admin.Id,
+                RoleId = 1 // Admin
+            };
+
+            _context.UserRoles.Add(adminRole);
+            _context.SaveChanges();
+
+            return Ok(new { message = "Admin created successfully!" });
+        }
+
 
     }
 }

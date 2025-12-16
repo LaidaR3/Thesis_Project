@@ -8,17 +8,8 @@
       ],
       "UpstreamPathTemplate": "/gateway/data/admin-secret",
       "UpstreamHttpMethod": [ "GET" ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      },
-"RouteClaimsRequirement": {
-  "http://schemas.microsoft.com/ws/2008/06/identity/claims/role": "Admin"
-}
-
-,
       "DownstreamHeaderTransform": {
-        "Authorization": "Bearer {Token}"
+        "Authorization": "{Headers.Authorization}"
       }
     },
 
@@ -30,13 +21,23 @@
       ],
       "UpstreamPathTemplate": "/gateway/data/secret",
       "UpstreamHttpMethod": [ "GET" ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer"
-      },
       "DownstreamHeaderTransform": {
-        "Authorization": "Bearer {Token}"
+        "Authorization": "{Headers.Authorization}"
       }
     },
+
+    {
+  "DownstreamPathTemplate": "/api/UserProfiles",
+  "DownstreamScheme": "http",
+  "DownstreamHostAndPorts": [
+    { "Host": "localhost", "Port": 5214 }
+  ],
+  "UpstreamPathTemplate": "/gateway/userprofiles",
+  "UpstreamHttpMethod": [ "GET" ],
+  "DownstreamHeaderTransform": {
+    "Authorization": "{Headers.Authorization}"
+  }
+},
 
     {
       "DownstreamPathTemplate": "/api/data/public",
@@ -46,38 +47,7 @@
       ],
       "UpstreamPathTemplate": "/gateway/data/public",
       "UpstreamHttpMethod": [ "GET" ]
-    },
-
-    {
-      "DownstreamPathTemplate": "/api/auth/{everything}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        { "Host": "localhost", "Port": 5240 }
-      ],
-      "UpstreamPathTemplate": "/gateway/auth/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
-    },
-
-    {
-      "DownstreamPathTemplate": "/api/userprofiles/{everything}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        { "Host": "localhost", "Port": 5214 }
-      ],
-      "UpstreamPathTemplate": "/gateway/user/userprofiles/{everything}",
-      "UpstreamHttpMethod": [ "GET" ]
-    },
-
-
-    {
-      "DownstreamPathTemplate": "/api/data/{everything}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        { "Host": "localhost", "Port": 5095 }
-      ],
-      "UpstreamPathTemplate": "/gateway/data/{everything}",
-      "UpstreamHttpMethod": [ "GET" ]
     }
   ],
-  "GlobalConfiguration": { }
+  "GlobalConfiguration": {}
 }

@@ -7,7 +7,7 @@ namespace auth_service.Models
         public required string LastName { get; set; }
         public required string Email { get; set; }
         public required string PasswordHash { get; set; }
-        public required string Role { get; set; } = "User";
+        
 
         public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
     }

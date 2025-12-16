@@ -16,10 +16,10 @@ builder.Services.AddDbContext<AuthDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-// Register JWT Service
+//Register JWT Service
 builder.Services.AddScoped<JwtService>();
 
-// JWT Authentication
+//JWT Authentication
 var key = builder.Configuration["Jwt:Key"];
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -35,14 +35,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Add Authorization
+//Add Authorization
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
 app.UseHttpsRedirection();
 
-// 🔐 These two must be in this exact order:
+
 app.UseAuthentication();
 app.UseAuthorization();
 
