@@ -19,6 +19,12 @@ builder.Services.AddDbContext<AuthDbContext>(options =>
 //Register JWT Service
 builder.Services.AddScoped<JwtService>();
 
+builder.Services.AddHttpClient<AuditClient>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5077");
+});
+
+
 //JWT Authentication
 var key = builder.Configuration["Jwt:Key"];
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

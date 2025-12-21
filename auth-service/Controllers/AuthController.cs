@@ -1,13 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using BCrypt.Net;
+
 using AuthService.Data;
+using AuthService.DTOs;
 using auth_service.Models;
 
 using AuthService.Services;
-using AuthService.DTOs;
-using Microsoft.EntityFrameworkCore;
-using BCrypt.Net;
-using System.Security.Claims;
-
 
 namespace AuthService.Controllers
 {
@@ -17,15 +16,20 @@ namespace AuthService.Controllers
     {
         private readonly AuthDbContext _context;
         private readonly JwtService _jwt;
+        private readonly AuditClient _audit;
 
-        public AuthController(AuthDbContext context, JwtService jwt)
+        public AuthController(
+            AuthDbContext context,
+            JwtService jwt,
+            AuditClient audit)
         {
             _context = context;
             _jwt = jwt;
+            _audit = audit;
         }
 
         [HttpPost("register")]
-        public IActionResult Register(RegisterDto dto)
+        public async Task<IActionResult> Register(RegisterDto dto)
         {
             var exists = _context.Users.FirstOrDefault(x => x.Email == dto.Email);
             if (exists != null)
@@ -40,7 +44,7 @@ namespace AuthService.Controllers
             };
 
             _context.Users.Add(user);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             var userRole = new UserRole
             {
@@ -49,28 +53,46 @@ namespace AuthService.Controllers
             };
 
             _context.UserRoles.Add(userRole);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+
+            AttachServiceToken();
+            await _audit.LogAsync("USER_REGISTERED");
 
             return Ok(new { message = "User registered successfully" });
         }
 
-
         [HttpPost("login")]
-        public IActionResult Login(LoginDto dto)
+        public async Task<IActionResult> Login(LoginDto dto)
         {
             var user = _context.Users
                 .Include(u => u.UserRoles)
                     .ThenInclude(ur => ur.Role)
                 .FirstOrDefault(x => x.Email == dto.Email);
-        
+
             if (user == null)
+            {
+ 
+                AttachServiceToken();
+                await _audit.LogAsync("LOGIN_FAILED");
+
                 return BadRequest("Invalid email or password.");
-        
+            }
+
             if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
+            {
+
+                AttachServiceToken();
+                await _audit.LogAsync("LOGIN_FAILED");
+
                 return BadRequest("Invalid email or password.");
-        
+            }
+
             var token = _jwt.GenerateToken(user);
-        
+
+            // 🔐 AUTO AUDIT (LOGIN SUCCESS)
+            AttachServiceToken();
+            await _audit.LogAsync("LOGIN_SUCCESS");
+
             return Ok(new
             {
                 token,
@@ -79,13 +101,9 @@ namespace AuthService.Controllers
                 id = user.Id
             });
         }
-        
-        
-        
-        
 
         [HttpPost("create-admin")]
-        public IActionResult CreateAdmin(RegisterDto dto)
+        public async Task<IActionResult> CreateAdmin(RegisterDto dto)
         {
             var exists = _context.Users.FirstOrDefault(x => x.Email == dto.Email);
             if (exists != null)
@@ -100,7 +118,7 @@ namespace AuthService.Controllers
             };
 
             _context.Users.Add(admin);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             var adminRole = new UserRole
             {
@@ -109,7 +127,11 @@ namespace AuthService.Controllers
             };
 
             _context.UserRoles.Add(adminRole);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+
+    
+            AttachServiceToken();
+            await _audit.LogAsync("ADMIN_CREATED");
 
             return Ok(new { message = "Admin created successfully!" });
         }
@@ -118,16 +140,14 @@ namespace AuthService.Controllers
         public IActionResult GenerateServiceToken([FromQuery] string serviceName)
         {
             var token = _jwt.GenerateServiceToken(serviceName);
-        
-            return Ok(new
-            {
-                token
-            });
+            return Ok(new { token });
         }
 
-        
+        private void AttachServiceToken()
+        {
+            var serviceToken = _jwt.GenerateServiceToken("auth-service");
 
-
-
+            _audit.SetAuthorization(serviceToken);
+        }
     }
 }

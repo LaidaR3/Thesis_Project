@@ -23,28 +23,28 @@ public class AuditController : ControllerBase
 
     // Only SERVICES can write logs
     [Authorize(Roles = "Service")]
-[HttpPost]
-public async Task<IActionResult> Create(CreateAuditLogDto dto)
-{
-    var auditLog = new AuditLog
+    [HttpPost]
+    public async Task<IActionResult> Create(CreateAuditLogDto dto)
     {
-        UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
-        Email = User.FindFirst(ClaimTypes.Email)?.Value,
-        Role = User.FindFirst(ClaimTypes.Role)?.Value,
-
-        ServiceName = User.Identity?.Name ?? "UnknownService",
-        Endpoint = HttpContext.Request.Path,
-        HttpMethod = HttpContext.Request.Method,
-
-        Result = dto.Result ?? "Success",
-        Timestamp = DateTime.UtcNow
-    };
-
-    _context.AuditLogs.Add(auditLog);
-    await _context.SaveChangesAsync();
-
-    return Ok();
-}
+        var auditLog = new AuditLog
+        {
+            UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+            Email = User.FindFirst(ClaimTypes.Email)?.Value,
+            Role = User.FindFirst(ClaimTypes.Role)?.Value,
+    
+            ServiceName = User.Identity?.Name ?? "UnknownService",
+            Endpoint = HttpContext.Request.Path,
+            HttpMethod = HttpContext.Request.Method,
+    
+            Result = dto.Result ?? "Success",
+            Timestamp = DateTime.UtcNow
+        };
+    
+        _context.AuditLogs.Add(auditLog);
+        await _context.SaveChangesAsync();
+    
+        return Ok();
+    }
 
     // Only ADMINS can read logs
     [Authorize(Roles = "Admin")]
