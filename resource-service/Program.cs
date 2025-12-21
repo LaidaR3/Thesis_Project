@@ -2,13 +2,15 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
+using ResourceService.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Controllers
 builder.Services.AddControllers();
 
-// JWT Authentication (ONLY HERE)
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -30,14 +32,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Authorization (roles)
+
 builder.Services.AddAuthorization();
+
+builder.Services.AddHttpClient<AuditClient>();
 
 var app = builder.Build();
 
 app.UseHttpsRedirection();
 
-// ✅ ORDER IS CRITICAL
+
 app.UseAuthentication();
 app.UseAuthorization();
 

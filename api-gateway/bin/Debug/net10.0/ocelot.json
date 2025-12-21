@@ -26,18 +26,32 @@
       }
     },
 
-    {
-  "DownstreamPathTemplate": "/api/UserProfiles",
+   {
+  "DownstreamPathTemplate": "/api/userprofiles",
   "DownstreamScheme": "http",
   "DownstreamHostAndPorts": [
     { "Host": "localhost", "Port": 5214 }
   ],
-  "UpstreamPathTemplate": "/gateway/userprofiles",
+  "UpstreamPathTemplate": "/gateway/user/userprofiles",
   "UpstreamHttpMethod": [ "GET" ],
+  "AuthenticationOptions": {
+    "AuthenticationProviderKey": "Bearer"
+  },
   "DownstreamHeaderTransform": {
     "Authorization": "{Headers.Authorization}"
   }
 },
+
+{
+  "DownstreamPathTemplate": "/api/auth/{everything}",
+  "DownstreamScheme": "http",
+  "DownstreamHostAndPorts": [
+    { "Host": "localhost", "Port": 5240 }
+  ],
+  "UpstreamPathTemplate": "/gateway/auth/{everything}",
+  "UpstreamHttpMethod": [ "POST", "GET" ]
+},
+
 
     {
       "DownstreamPathTemplate": "/api/data/public",

@@ -6,6 +6,8 @@ using AuthService.Services;
 using AuthService.DTOs;
 using Microsoft.EntityFrameworkCore;
 using BCrypt.Net;
+using System.Security.Claims;
+
 
 namespace AuthService.Controllers
 {
@@ -111,6 +113,20 @@ namespace AuthService.Controllers
 
             return Ok(new { message = "Admin created successfully!" });
         }
+
+        [HttpPost("service-token")]
+        public IActionResult GenerateServiceToken([FromQuery] string serviceName)
+        {
+            var token = _jwt.GenerateServiceToken(serviceName);
+        
+            return Ok(new
+            {
+                token
+            });
+        }
+
+        
+
 
 
     }

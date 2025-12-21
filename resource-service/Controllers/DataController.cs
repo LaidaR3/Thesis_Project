@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ResourceService.Services;
+using System.Security.Claims;
 
 namespace resource_service.Controllers
 {
@@ -7,23 +9,30 @@ namespace resource_service.Controllers
     [Route("api/data")]
     public class DataController : ControllerBase
     {
-        [HttpGet("public")]
-        public IActionResult GetPublic()
-        {
-            return Ok(new { message = "Public data" });
-        }
+        private readonly AuditClient _audit;
 
-        [Authorize]
-        [HttpGet("secret")]
-        public IActionResult GetSecret()
+        public DataController(AuditClient audit)
         {
-            return Ok(new { message = "Authenticated data" });
+            _audit = audit;
         }
 
         [Authorize(Roles = "Admin")]
         [HttpGet("admin-secret")]
-        public IActionResult GetAdminSecret()
+        public async Task<IActionResult> GetAdminSecret()
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var email  = User.FindFirstValue(ClaimTypes.Email)!;
+            var role   = User.FindFirstValue(ClaimTypes.Role)!;
+
+            await _audit.LogAsync(
+                userId,
+                email,
+                role,
+                "/api/data/admin-secret",
+                "GET",
+                "Allowed"
+            );
+
             return Ok(new { message = "Admin-only secret data" });
         }
     }
