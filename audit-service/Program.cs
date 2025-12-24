@@ -32,8 +32,13 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+
+app.UseMiddleware<DeniedAuditMiddleware>();
+
 app.UseAuthentication();
 app.UseAuthorization();
+
+
 
 app.MapControllers();
 app.Run();
