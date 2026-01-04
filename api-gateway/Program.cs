@@ -1,24 +1,3 @@
-// using Ocelot.DependencyInjection;
-// using Ocelot.Middleware;
-
-// var builder = WebApplication.CreateBuilder(args);
-
-// // Load Ocelot config
-// builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
-
-// // Register Ocelot ONLY
-// builder.Services.AddOcelot();
-
-// var app = builder.Build();
-
-
-
-
-// await app.UseOcelot();
-// app.Run();
-
-
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
@@ -29,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
 
-// 🔐 IMPORTANT: Scheme name MUST be "Bearer"
+
 builder.Services
     .AddAuthentication(options =>
     {
@@ -43,10 +22,8 @@ builder.Services
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateIssuerSigningKey = true,
-
             ValidIssuer = "auth-service",
             ValidAudience = "api-gateway",
-
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
             )
@@ -54,10 +31,25 @@ builder.Services
     });
 
 builder.Services.AddAuthorization();
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FrontendPolicy", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
+
 builder.Services.AddOcelot(builder.Configuration);
 
 var app = builder.Build();
 
+app.UseCors("FrontendPolicy"); 
 app.UseAuthentication();
 app.UseAuthorization();
 
