@@ -18,11 +18,11 @@ builder.Services.AddAuthentication(options =>
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
-        ValidateAudience = true,
+        ValidateAudience = false,
         ValidateIssuerSigningKey = true,
 
         ValidIssuer = "auth-service",
-        ValidAudience = "api-gateway",
+        // ValidAudience = "api-gateway",
 
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)

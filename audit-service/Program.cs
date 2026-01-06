@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,13 +19,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidateAudience = true,
+            ValidateAudience = false,
             ValidateIssuerSigningKey = true,
             ValidIssuer = "auth-service",
             ValidAudience = "api-gateway",
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
-            )
+            ),
+            RoleClaimType = ClaimTypes.Role, 
+            NameClaimType = ClaimTypes.NameIdentifier
         };
     });
 
@@ -33,12 +36,12 @@ builder.Services.AddAuthorization();
 var app = builder.Build();
 
 
-app.UseMiddleware<DeniedAuditMiddleware>();
+
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-
+app.UseMiddleware<DeniedAuditMiddleware>();
 
 app.MapControllers();
 app.Run();

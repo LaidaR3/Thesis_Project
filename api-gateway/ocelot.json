@@ -1,32 +1,34 @@
 {
   "Routes": [
-    {
-      "DownstreamPathTemplate": "/api/data/admin-secret",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        { "Host": "localhost", "Port": 5095 }
-      ],
-      "UpstreamPathTemplate": "/gateway/data/admin-secret",
-      "UpstreamHttpMethod": [ "GET" ],
-      "DownstreamHeaderTransform": {
-        "Authorization": "{Headers.Authorization}"
-      }
-    },
+{
+  "DownstreamPathTemplate": "/api/data/admin-secret",
+  "DownstreamScheme": "http",
+  "DownstreamHostAndPorts": [
+    { "Host": "localhost", "Port": 5095 }
+  ],
+  "UpstreamPathTemplate": "/gateway/data/admin-secret",
+  "UpstreamHttpMethod": [ "GET" ],
+  
+  "DownstreamHeaderTransform": {
+    "Authorization": "{Headers.Authorization}"
+  }
+},
+{
+  "DownstreamPathTemplate": "/api/data/secret",
+  "DownstreamScheme": "http",
+  "DownstreamHostAndPorts": [
+    { "Host": "localhost", "Port": 5095 }
+  ],
+  "UpstreamPathTemplate": "/gateway/data/secret",
+  "UpstreamHttpMethod": [ "GET" ],
+  
+  "DownstreamHeaderTransform": {
+    "Authorization": "{Headers.Authorization}"
+  }
+},
 
-    {
-      "DownstreamPathTemplate": "/api/data/secret",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        { "Host": "localhost", "Port": 5095 }
-      ],
-      "UpstreamPathTemplate": "/gateway/data/secret",
-      "UpstreamHttpMethod": [ "GET" ],
-      "DownstreamHeaderTransform": {
-        "Authorization": "{Headers.Authorization}"
-      }
-    },
 
-   {
+{
   "DownstreamPathTemplate": "/api/userprofiles",
   "DownstreamScheme": "http",
   "DownstreamHostAndPorts": [
@@ -34,13 +36,26 @@
   ],
   "UpstreamPathTemplate": "/gateway/user/userprofiles",
   "UpstreamHttpMethod": [ "GET" ],
-  "AuthenticationOptions": {
-    "AuthenticationProviderKey": "Bearer"
-  },
   "DownstreamHeaderTransform": {
     "Authorization": "{Headers.Authorization}"
   }
 },
+
+{
+  "DownstreamPathTemplate": "/api/audit",
+  "DownstreamScheme": "http",
+  "DownstreamHostAndPorts": [
+    { "Host": "localhost", "Port": 5077 }
+  ],
+  "UpstreamPathTemplate": "/gateway/audit",
+  "UpstreamHttpMethod": [ "GET" ],
+
+  "DownstreamHeaderTransform": {
+    "Authorization": "{Headers.Authorization}"
+  }
+}
+,
+
 
 {
   "DownstreamPathTemplate": "/api/auth/{everything}",

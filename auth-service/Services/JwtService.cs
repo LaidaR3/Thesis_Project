@@ -15,7 +15,6 @@ namespace AuthService.Services
             _config = config;
         }
 
-
         public string GenerateToken(User user)
         {
             var keyString = _config["Jwt:Key"]
@@ -36,7 +35,6 @@ namespace AuthService.Services
                 new Claim(ClaimTypes.Email, user.Email)
             };
 
-            // Roles from DB
             foreach (var userRole in user.UserRoles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, userRole.Role.Name));
@@ -52,7 +50,6 @@ namespace AuthService.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
 
         public string GenerateServiceToken(string serviceName)
         {
@@ -70,7 +67,7 @@ namespace AuthService.Services
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, serviceName),
+                new Claim("service_name", serviceName),
                 new Claim(ClaimTypes.Role, "Service")
             };
 

@@ -1,22 +1,46 @@
 using AuthService.Data;
 using AuthService.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add Controllers
+
 builder.Services.AddControllers();
 
-// Register DbContext
 builder.Services.AddDbContext<AuthDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
+
+builder.Services.AddAuthentication(options =>
 {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = false,
+        ValidateIssuerSigningKey = true,
+        ValidateLifetime = true,
+
+        ValidIssuer = "auth-service",
+
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
+        ),
+
+        ClockSkew = TimeSpan.Zero
+    };
 });
 
-//Register JWT Service
+builder.Services.AddAuthorization();
+
+
 builder.Services.AddScoped<JwtService>();
 
 builder.Services.AddHttpClient<AuditClient>(client =>
@@ -24,32 +48,9 @@ builder.Services.AddHttpClient<AuditClient>(client =>
     client.BaseAddress = new Uri("http://localhost:5077");
 });
 
+var app = builder.Build()
 
-//JWT Authentication
-var key = builder.Configuration["Jwt:Key"];
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = "auth-service",
-            ValidAudience = "api-gateway",
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
-        };
-    });
-
-//Add Authorization
-builder.Services.AddAuthorization();
-
-var app = builder.Build();
-
-app.UseHttpsRedirection();
-
-
-app.UseAuthentication();
+app.UseAuthentication();   
 app.UseAuthorization();
 
 app.MapControllers();
