@@ -118,42 +118,42 @@ namespace AuthService.Controllers
         
 
         [HttpPost("create-admin")]
-public async Task<IActionResult> CreateAdmin(RegisterDto dto)
-{
-    var exists = _context.Users.FirstOrDefault(x => x.Email == dto.Email);
-    if (exists != null)
-        return BadRequest("User with this email already exists.");
+        public async Task<IActionResult> CreateAdmin(RegisterDto dto)
+        {
+            var exists = _context.Users.FirstOrDefault(x => x.Email == dto.Email);
+            if (exists != null)
+                return BadRequest("User with this email already exists.");
 
-    var admin = new User
-    {
-        FirstName = dto.FirstName,
-        LastName = dto.LastName,
-        Email = dto.Email,
-        PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
-    };
+            var admin = new User
+            {
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Email = dto.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
+            };
 
-    _context.Users.Add(admin);
-    await _context.SaveChangesAsync();
+            _context.Users.Add(admin);
+            await _context.SaveChangesAsync();
 
-    var adminRole = new UserRole
-    {
-        UserId = admin.Id,
-        RoleId = 1 // Admin
-    };
+            var adminRole = new UserRole
+            {
+                UserId = admin.Id,
+                RoleId = 1 // Admin
+            };
 
-    _context.UserRoles.Add(adminRole);
-    await _context.SaveChangesAsync();
+            _context.UserRoles.Add(adminRole);
+            await _context.SaveChangesAsync();
 
-   
-    AttachServiceToken();
-    await _audit.LogAsync(new CreateAuditLogDto
-    {
-        Action = "Admin Created",
-        TargetEndpoint = "/auth/create-admin"
-    });
+        
+            AttachServiceToken();
+            await _audit.LogAsync(new CreateAuditLogDto
+            {
+                Action = "Admin Created",
+                TargetEndpoint = "/auth/create-admin"
+            });
 
-    return Ok(new { message = "Admin created successfully!" });
-}
+            return Ok(new { message = "Admin created successfully!" });
+        }
 
 
         [HttpPost("service-token")]

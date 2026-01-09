@@ -39,7 +39,7 @@ namespace auth_service.Controllers
       
         [Authorize]
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(Guid id)
         {
             var callerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var callerRole = User.FindFirst(ClaimTypes.Role)?.Value;
@@ -68,7 +68,7 @@ namespace auth_service.Controllers
       
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> Create(User newUser)
+        public async Task<IActionResult> Create(Guid id, User newUser)
         {
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
@@ -83,7 +83,7 @@ namespace auth_service.Controllers
        
         [Authorize]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, User updated)
+        public async Task<IActionResult> Update(Guid id, User updated)
         {
             var callerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var callerRole = User.FindFirst(ClaimTypes.Role)?.Value;
@@ -106,7 +106,7 @@ namespace auth_service.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null) return NotFound();

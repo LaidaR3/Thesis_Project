@@ -20,29 +20,29 @@ namespace AuditService.Controllers
 
       
         [Authorize(Roles = "Service")]
-[HttpPost]
-public async Task<IActionResult> Create(CreateAuditLogDto dto)
-{
-    var auditLog = new AuditLog
-    {
-        UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
-        Email = User.FindFirst(ClaimTypes.Email)?.Value,
-        Role = User.FindFirst(ClaimTypes.Role)?.Value,
-
-        ServiceName = User.FindFirst("service_name")?.Value ?? "UnknownService",
-
-        Endpoint = dto.TargetEndpoint,
-        HttpMethod = HttpContext.Request.Method,
-
-        Result = dto.Action,
-        Timestamp = DateTime.UtcNow
-    };
-
-    _context.AuditLogs.Add(auditLog);
-    await _context.SaveChangesAsync();
-
-    return Ok();
-}
+        [HttpPost]
+        public async Task<IActionResult> Create(CreateAuditLogDto dto)
+        {
+            var auditLog = new AuditLog
+            {
+                UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+                Email = User.FindFirst(ClaimTypes.Email)?.Value,
+                Role = User.FindFirst(ClaimTypes.Role)?.Value,
+        
+                ServiceName = User.FindFirst("service_name")?.Value ?? "UnknownService",
+        
+                Endpoint = dto.TargetEndpoint,
+                HttpMethod = HttpContext.Request.Method,
+        
+                Result = dto.Action,
+                Timestamp = DateTime.UtcNow
+            };
+        
+            _context.AuditLogs.Add(auditLog);
+            await _context.SaveChangesAsync();
+        
+            return Ok();
+        }
 
 
 

@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import RequireAuth from "./auth/RequireAuth";
 import RequireAdmin from "./auth/RequireAdmin";
 import Unauthorized from "./pages/Unauthorized";
+import Profile from "./pages/Profile";
 
 
 function App() {
@@ -23,10 +24,18 @@ function App() {
         }
       />
       <Route path="/unauthorized" element={<Unauthorized />} />
+      <Route
+        path="/profile"
+        element={
+          <RequireAuth>
+            <Profile />
+          </RequireAuth>
+        }
+      />
 
 
     </Routes>
-   
+
   );
 }
 
