@@ -25,8 +25,7 @@
   "DownstreamHeaderTransform": {
     "Authorization": "{Headers.Authorization}"
   }
-}
-,
+},
 
 
 {
@@ -40,8 +39,7 @@
   "DownstreamHeaderTransform": {
     "Authorization": "{Headers.Authorization}"
   }
-}
-,
+},
 
 {
   "DownstreamPathTemplate": "/api/audit",

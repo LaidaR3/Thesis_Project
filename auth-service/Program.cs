@@ -48,7 +48,7 @@ builder.Services.AddHttpClient<AuditClient>(client =>
     client.BaseAddress = new Uri("http://localhost:5077");
 });
 
-var app = builder.Build()
+var app = builder.Build();
 
 app.UseAuthentication();   
 app.UseAuthorization();

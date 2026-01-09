@@ -1,4 +1,4 @@
-namespace AuditService.DTOs
+namespace AuthService.DTOs.Audit
 {
     public class CreateAuditLogDto
     {

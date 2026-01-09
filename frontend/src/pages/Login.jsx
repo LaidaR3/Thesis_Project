@@ -17,12 +17,28 @@ const handleLogin = async () => {
       password,
     });
 
-    login(response.data.token); 
+    login(response.data.token);
     navigate("/dashboard");
-  } catch {
-    alert("Invalid credentials");
+  } catch (error) {
+    if (!error.response) {
+      alert("Service unavailable. Please try again later.");
+      return;
+    }
+
+    if (error.response.status === 401) {
+      alert("Invalid email or password.");
+      return;
+    }
+
+    if (error.response.status === 503) {
+      alert("Authentication service is unavailable.");
+      return;
+    }
+
+    alert("Unexpected error occurred.");
   }
 };
+
 
   return (
     <div className="login-page">

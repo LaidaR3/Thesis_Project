@@ -1,29 +1,32 @@
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using AuthService.DTOs.Audit;
 
-namespace AuthService.Services
+public class AuditClient
 {
-    public class AuditClient
+    private readonly HttpClient _client;
+
+    public AuditClient(HttpClient client)
     {
-        private readonly HttpClient _http;
+        _client = client;
+    }
 
-        public AuditClient(HttpClient http)
+   
+    public async Task LogAsync(string result)
+    {
+        await _client.PostAsJsonAsync("/api/audit", new
         {
-            _http = http;
-        }
+            Result = result
+        });
+    }
 
-        public void SetAuthorization(string token)
-        {
-            _http.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", token);
-        }
+    public async Task LogAsync(CreateAuditLogDto dto)
+    {
+        await _client.PostAsJsonAsync("/api/audit", dto);
+    }
 
-        public async Task LogAsync(string result)
-        {
-            await _http.PostAsJsonAsync("/api/audit", new
-            {
-                result = result
-            });
-        }
+    public void SetAuthorization(string token)
+    {
+        _client.DefaultRequestHeaders.Authorization =
+            new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
     }
 }
