@@ -45,9 +45,7 @@ export default function Dashboard() {
       <div className="dashboard-header">
         <div>
           <h1>Audit Logs</h1>
-          <span className="user-email">
-            {user?.email} {renderRoles() && `(${renderRoles()})`}
-          </span>
+          
         </div>
 
       
@@ -67,14 +65,14 @@ export default function Dashboard() {
           onChange={(e) => setStatusFilter(e.target.value)}
         >
           <option value="">All statuses</option>
-          <option value="LOGIN_SUCCESS">LOGIN_SUCCESS</option>
+          <option value="LOGIN_SUCCESS">Login Sucess</option>
           <option value="LOGIN_FAILED_INVALID_CREDENTIALS">
-            LOGIN_FAILED_INVALID_CREDENTIALS
+            Login Failed - Invalid Credentials
           </option>
           <option value="LOGIN_FAILED_SYSTEM_ERROR">
-            LOGIN_FAILED_SYSTEM_ERROR
+            Login Failed - System Error
           </option>
-          <option value="ADMIN_CREATED">ADMIN_CREATED</option>
+          <option value="ADMIN_CREATED">Admin Created</option>
         </select>
       </div>
 

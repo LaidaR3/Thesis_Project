@@ -1,7 +1,9 @@
 .profile-container {
   width: 100%;
+  min-height: 100vh;  
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .profile-wrapper {
@@ -25,8 +27,8 @@
 
 .back-btn {
   background: transparent;
-  border: 1px solid #2563eb;
-  color: #2563eb;
+  border: 1px solid #08235b;
+  color: #08235b;
   padding: 8px 14px;
   border-radius: 8px;
   cursor: pointer;
@@ -34,7 +36,7 @@
 }
 
 .back-btn:hover {
-  background: #2563eb;
+  background: #08235b;
   color: #ffffff;
 }
 
@@ -67,4 +69,21 @@
 .profile-loading {
   padding: 40px;
   font-size: 16px;
+}
+
+
+
+.save-btn{
+  background: #08235b;
+  border: none;
+  color: #ffff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.4s;
+}
+
+.save-btn:hover {
+  background: #ffff;
+  color: #08235b;
 }

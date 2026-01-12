@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using AuthService.Data;
 using auth_service.Models;
 using System.Security.Claims;
+using AuthService.DTOs;
 
 namespace auth_service.Controllers
 {
@@ -83,7 +84,7 @@ namespace auth_service.Controllers
        
         [Authorize]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, User updated)
+        public async Task<IActionResult> Update(Guid id, UpdateProfileDto dto)
         {
             var callerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var callerRole = User.FindFirst(ClaimTypes.Role)?.Value;
@@ -94,15 +95,35 @@ namespace auth_service.Controllers
             var user = await _context.Users.FindAsync(id);
             if (user == null) return NotFound();
 
-            user.FirstName = updated.FirstName;
-            user.LastName = updated.LastName;
-            user.Email = updated.Email;
-
-       
+            user.FirstName = dto.FirstName;
+            user.LastName = dto.LastName;
 
             await _context.SaveChangesAsync();
             return Ok(new { message = "User updated successfully" });
         }
+
+        [Authorize]
+        [HttpPut("{id}/password")]
+        public async Task<IActionResult> ChangePassword(Guid id, ChangePasswordDto dto)
+        {
+            var callerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (callerId != id.ToString())
+                return Forbid();
+
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) return NotFound();
+
+           
+            if (!BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.PasswordHash))
+                return BadRequest("Current password is incorrect");
+           
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Password updated successfully" });
+        }
+
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]

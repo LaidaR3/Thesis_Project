@@ -6,6 +6,8 @@ import { IoAdd, IoLogOutOutline } from "react-icons/io5";
 import { FaUsers } from "react-icons/fa6";
 import { FaUserAlt } from "react-icons/fa";
 import { TbBrandGoogleAnalytics } from "react-icons/tb";
+import { LuLogs } from "react-icons/lu";
+
 
 export default function Sidebar() {
     const { logout, user } = useAuth();
@@ -19,13 +21,18 @@ export default function Sidebar() {
     return (
         <aside className="sidebar">
             <div className="sidebar-header">
-                <span className="logo">🛡️</span>
+                <span className="logo"></span>
                 <h2>Admin Panel</h2>
             </div>
 
             <nav className="sidebar-menu">
-                <NavLink to="/dashboard" className="menu-item">
+                <NavLink to="/" className="menu-item">
                     <span className="icon"><TbBrandGoogleAnalytics /></span>
+                    <span>Dashboard</span>
+                </NavLink>
+
+                <NavLink to="/dashboard" className="menu-item">
+                    <span className="icon"><LuLogs /></span>
                     <span>Audit Logs</span>
                 </NavLink>
 

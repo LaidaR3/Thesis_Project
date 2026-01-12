@@ -41,6 +41,7 @@
   }
 },
 
+
 {
   "DownstreamPathTemplate": "/api/audit",
   "DownstreamScheme": "http",
@@ -64,8 +65,13 @@
     { "Host": "localhost", "Port": 5240 }
   ],
   "UpstreamPathTemplate": "/gateway/auth/{everything}",
-  "UpstreamHttpMethod": [ "POST", "GET" ]
+  "UpstreamHttpMethod": [ "POST", "GET", "PUT", "DELETE" ],
+  "DownstreamHeaderTransform": {
+    "Authorization": "{Headers.Authorization}"
+  }
 },
+
+
 
 
     {
