@@ -10,6 +10,9 @@ using AuthService.Services;
 
 using AuthService.DTOs.Audit;
 
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+
 
 namespace AuthService.Controllers
 {
@@ -69,58 +72,102 @@ namespace AuthService.Controllers
         }
         
         [HttpPost("login")]
-public async Task<IActionResult> Login(LoginDto dto)
-{
-    try
-    {
-        var user = _context.Users
-            .Include(u => u.UserRoles)
-                .ThenInclude(ur => ur.Role)
-            .FirstOrDefault(x => x.Email == dto.Email);
-
-        if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
+        public async Task<IActionResult> Login(LoginDto dto)
         {
-            AttachServiceToken();
+            try
+            {
+                var user = _context.Users
+                    .Include(u => u.UserRoles)
+                        .ThenInclude(ur => ur.Role)
+                    .FirstOrDefault(x => x.Email == dto.Email);
+        
+                if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
+                {
+                    AttachServiceToken();
+        
+                    await _audit.LogAsync(new CreateAuditLogDto
+                    {
+                        Action = "Login Failed - Invalid Credentials",
+                        TargetEndpoint = "/auth/login"
+                    });
+        
+                    return Unauthorized("Invalid email or password.");
+                }
+        
+                var token = _jwt.GenerateToken(user);
+        
+                AttachServiceToken();
+                await _audit.LogAsync(new CreateAuditLogDto
+                {
+                    Action = "Login Successfully",
+                    TargetEndpoint = "/auth/login"
+                });
+        
+                return Ok(new
+                {
+                    token,
+                    email = user.Email,
+                    roles = user.UserRoles.Select(ur => ur.Role.Name),
+                    id = user.Id
+                });
+            }
+            catch
+            {
+                AttachServiceToken();
+        
+                await _audit.LogAsync(new CreateAuditLogDto
+                {
+                    Action = "LOGIN_FAILED_SYSTEM_ERROR",
+                    TargetEndpoint = "/auth/login"
+                });
+        
+                return StatusCode(503, "Authentication service unavailable.");
+            }
+        }
+        
 
+
+
+        [Authorize(Roles = "Admin,Service")]
+        [HttpPost("create-admin")]
+        public async Task<IActionResult> CreateAdmin(CreateAdminDto dto)
+        {
+            var exists = await _context.Users.FirstOrDefaultAsync(x => x.Email == dto.Email);
+            if (exists != null)
+                return BadRequest("User with this email already exists.");
+
+            var admin = new User
+            {
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Email = dto.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
+            };
+
+            _context.Users.Add(admin);
+            await _context.SaveChangesAsync();
+
+            var adminRole = new UserRole
+            {
+                UserId = admin.Id,
+                RoleId = 1 
+            };
+
+            _context.UserRoles.Add(adminRole);
+            await _context.SaveChangesAsync();
+
+            // Audit who created the admin
+            AttachServiceToken();
             await _audit.LogAsync(new CreateAuditLogDto
             {
-                Action = "Login Failed - Invalid Credentials",
-                TargetEndpoint = "/auth/login"
+                Action = "Admin Created",
+                TargetEndpoint = "/auth/create-admin",
+                Metadata = $"CreatedBy={User.FindFirst(ClaimTypes.Email)?.Value}"
             });
 
-            return Unauthorized("Invalid email or password.");
+            return Ok(new { message = "Admin created successfully" });
         }
 
-        var token = _jwt.GenerateToken(user);
-
-        AttachServiceToken();
-        await _audit.LogAsync(new CreateAuditLogDto
-        {
-            Action = "Login Successfully",
-            TargetEndpoint = "/auth/login"
-        });
-
-        return Ok(new
-        {
-            token,
-            email = user.Email,
-            roles = user.UserRoles.Select(ur => ur.Role.Name),
-            id = user.Id
-        });
-    }
-    catch
-    {
-        AttachServiceToken();
-
-        await _audit.LogAsync(new CreateAuditLogDto
-        {
-            Action = "LOGIN_FAILED_SYSTEM_ERROR",
-            TargetEndpoint = "/auth/login"
-        });
-
-        return StatusCode(503, "Authentication service unavailable.");
-    }
-}
 
 
         [HttpPost("service-token")]

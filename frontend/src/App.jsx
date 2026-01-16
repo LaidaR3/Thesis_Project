@@ -6,7 +6,7 @@ import RequireAuth from "./auth/RequireAuth";
 import RequireAdmin from "./auth/RequireAdmin";
 import Unauthorized from "./pages/Unauthorized";
 import Profile from "./pages/Profile";
-
+import CreateAdmin from "./pages/CreateAdmin";
 
 function App() {
   return (
@@ -29,6 +29,13 @@ function App() {
         element={
           <RequireAuth>
             <Profile />
+          </RequireAuth>
+        }
+      /><Route
+        path="/create-admin"
+        element={
+          <RequireAuth>
+            <CreateAdmin />
           </RequireAuth>
         }
       />
