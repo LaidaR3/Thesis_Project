@@ -17,8 +17,9 @@ using System.Security.Claims;
 namespace AuthService.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class AuthController : ControllerBase
+[Route("api/auth")]
+public class AuthController : ControllerBase
+
     {
         private readonly AuthDbContext _context;
         private readonly JwtService _jwt;
@@ -35,138 +36,147 @@ namespace AuthService.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterDto dto)
-        {
-            var exists = _context.Users.FirstOrDefault(x => x.Email == dto.Email);
-            if (exists != null)
-                return BadRequest("User with this email already exists.");
-        
-            var user = new User
-            {
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                Email = dto.Email,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
-            };
-        
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-        
-            var userRole = new UserRole
-            {
-                UserId = user.Id,
-                RoleId = 2 // User
-            };
-        
-            _context.UserRoles.Add(userRole);
-            await _context.SaveChangesAsync();
-        
-            AttachServiceToken();
-            await _audit.LogAsync(new CreateAuditLogDto
-            {
-                Action = "User Registered",
-                TargetEndpoint = "/auth/register"
-            });
-        
-            return Ok(new { message = "User registered successfully" });
-        }
+public async Task<IActionResult> Register(RegisterDto dto)
+{
+    var exists = await _context.Users
+        .FirstOrDefaultAsync(x => x.Email == dto.Email);
+
+    if (exists != null)
+        return BadRequest("User with this email already exists.");
+
+    var user = new User
+    {
+        FirstName = dto.FirstName,
+        LastName = dto.LastName,
+        Email = dto.Email,
+        PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
+    };
+
+    _context.Users.Add(user);
+    await _context.SaveChangesAsync();
+
+    var role = await _context.Roles
+        .FirstOrDefaultAsync(r => r.Name == "User");
+
+    if (role == null)
+        return StatusCode(500, "Default role 'User' not found.");
+
+    _context.UserRoles.Add(new UserRole
+    {
+        UserId = user.Id,
+        RoleId = role.Id
+    });
+
+    await _context.SaveChangesAsync();
+
+    // SAFE audit
+    TryAudit("User Registered", "/auth/register");
+
+    return Ok(new { message = "User registered successfully" });
+}
+
         
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDto dto)
+public IActionResult Login(LoginDto dto)
+{
+    var user = _context.Users
+        .Include(u => u.UserRoles)
+            .ThenInclude(ur => ur.Role)
+        .FirstOrDefault(x => x.Email == dto.Email);
+
+    if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
+    {
+        TryAudit("Login Failed - Invalid Credentials", "/auth/login");
+        return Unauthorized("Invalid email or password.");
+    }
+
+    var token = _jwt.GenerateToken(user);
+
+    TryAudit(
+        "Login Successfully",
+        "/auth/login",
+        $"UserId={user.Id}, Roles={string.Join(",", user.UserRoles.Select(r => r.Role.Name))}"
+    );
+
+    return Ok(new
+    {
+        token,
+        email = user.Email,
+        roles = user.UserRoles.Select(ur => ur.Role.Name),
+        id = user.Id
+    });
+}
+
+
+        private async void TryAudit(string action, string endpoint, string? metadata = null)
+{
+    try
+    {
+        AttachServiceToken();
+        await _audit.LogAsync(new CreateAuditLogDto
         {
-            try
-            {
-                var user = _context.Users
-                    .Include(u => u.UserRoles)
-                        .ThenInclude(ur => ur.Role)
-                    .FirstOrDefault(x => x.Email == dto.Email);
-        
-                if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
-                {
-                    AttachServiceToken();
-        
-                    await _audit.LogAsync(new CreateAuditLogDto
-                    {
-                        Action = "Login Failed - Invalid Credentials",
-                        TargetEndpoint = "/auth/login"
-                    });
-        
-                    return Unauthorized("Invalid email or password.");
-                }
-        
-                var token = _jwt.GenerateToken(user);
-        
-                AttachServiceToken();
-                await _audit.LogAsync(new CreateAuditLogDto
-                {
-                    Action = "Login Successfully",
-                    TargetEndpoint = "/auth/login"
-                });
-        
-                return Ok(new
-                {
-                    token,
-                    email = user.Email,
-                    roles = user.UserRoles.Select(ur => ur.Role.Name),
-                    id = user.Id
-                });
-            }
-            catch
-            {
-                AttachServiceToken();
-        
-                await _audit.LogAsync(new CreateAuditLogDto
-                {
-                    Action = "LOGIN_FAILED_SYSTEM_ERROR",
-                    TargetEndpoint = "/auth/login"
-                });
-        
-                return StatusCode(503, "Authentication service unavailable.");
-            }
-        }
+            Action = action,
+            TargetEndpoint = endpoint,
+            Metadata = metadata
+        });
+    }
+    catch (Exception ex)
+    {
+        // swallow on purpose
+        Console.WriteLine($"[AUDIT FAILED] {ex.Message}");
+    }
+}
+
         
 
 
 
-        [Authorize(Roles = "Admin,Service")]
-        [HttpPost("create-admin")]
-        public async Task<IActionResult> CreateAdmin(CreateAdminDto dto)
-        {
-            var exists = await _context.Users.FirstOrDefaultAsync(x => x.Email == dto.Email);
-            if (exists != null)
-                return BadRequest("User with this email already exists.");
+      [Authorize(Roles = "Admin,Service")]
+[HttpPost("create-admin")]
+public async Task<IActionResult> CreateAdmin(CreateAdminDto dto)
+{
+    var exists = await _context.Users.FirstOrDefaultAsync(x => x.Email == dto.Email);
+    if (exists != null)
+        return BadRequest("User with this email already exists.");
 
-            var admin = new User
-            {
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                Email = dto.Email,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
-            };
+    var admin = new User
+    {
+        FirstName = dto.FirstName,
+        LastName = dto.LastName,
+        Email = dto.Email,
+        PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
+    };
 
-            _context.Users.Add(admin);
-            await _context.SaveChangesAsync();
+    _context.Users.Add(admin);
+    await _context.SaveChangesAsync();
 
-            var adminRole = new UserRole
-            {
-                UserId = admin.Id,
-                RoleId = 1 
-            };
+    var adminRoleId = await _context.Roles
+        .Where(r => r.Name == "Admin")
+        .Select(r => r.Id)
+        .FirstOrDefaultAsync();
 
-            _context.UserRoles.Add(adminRole);
-            await _context.SaveChangesAsync();
+    if (adminRoleId == 0)
+        return StatusCode(500, "Admin role not configured.");
 
-            // Audit who created the admin
-            AttachServiceToken();
-            await _audit.LogAsync(new CreateAuditLogDto
-            {
-                Action = "Admin Created",
-                TargetEndpoint = "/auth/create-admin",
-                Metadata = $"CreatedBy={User.FindFirst(ClaimTypes.Email)?.Value}"
-            });
+    _context.UserRoles.Add(new UserRole
+    {
+        UserId = admin.Id,
+        RoleId = adminRoleId
+    });
 
-            return Ok(new { message = "Admin created successfully" });
-        }
+    await _context.SaveChangesAsync();
+
+    AttachServiceToken();
+    await _audit.LogAsync(new CreateAuditLogDto
+    {
+        Action = "Admin Created",
+        TargetEndpoint = "/auth/create-admin",
+        Metadata = $"CreatedBy={User.FindFirst(ClaimTypes.Email)?.Value}"
+    });
+
+    return Ok(new { message = "Admin created successfully" });
+}
+
 
 
 

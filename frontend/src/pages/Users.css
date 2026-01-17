@@ -1,0 +1,81 @@
+/* Page container */
+.admin-page {
+  padding: 30px;
+  background: #f9fafb;
+  min-height: 100vh;
+}
+
+/* Page title */
+.admin-page h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #111;
+}
+
+/* Search / actions row */
+.table-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.table-actions input {
+  width: 320px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  outline: none;
+}
+
+.table-actions input::placeholder {
+  color: #999;
+}
+
+/* Table wrapper (rounded white card like Audit Logs) */
+.admin-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: white;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+/* Table header */
+.admin-table thead {
+  background: #f1f3f5;
+}
+
+.admin-table th {
+  text-align: left;
+  padding: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+}
+
+/* Table rows */
+.admin-table td {
+  padding: 16px;
+  font-size: 15px;
+  color: #222;
+  border-top: 1px solid #eee;
+}
+
+/* Hover effect (same feel as audit logs) */
+.admin-table tbody tr:hover {
+  background: #fafafa;
+}
+
+/* Optional: align name + email nicely */
+.admin-table td:first-child {
+  font-weight: 600;
+}
+
+/* Loading text */
+.admin-page p {
+  font-size: 16px;
+  color: #666;
+}

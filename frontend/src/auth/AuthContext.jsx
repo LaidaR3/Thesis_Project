@@ -8,36 +8,39 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!token) {
-      setUser(null);
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const decoded = jwtDecode(token);
-
-      setUser({
-        id: decoded[
-          "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
-        ],
-        email: decoded[
-          "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
-        ],
-        roles:
-          decoded[
-            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-          ],
-        token,
-      });
-    } catch {
-      localStorage.removeItem("token");
-      setUser(null);
-    }
-
+useEffect(() => {
+  if (!token) {
+    setUser(null);
     setLoading(false);
-  }, [token]);
+    return;
+  }
+
+  try {
+    const decoded = jwtDecode(token);
+
+    const rawRoles =
+      decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+
+    const roles = Array.isArray(rawRoles) ? rawRoles : [rawRoles];
+
+    setUser({
+      id: decoded[
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
+      ],
+      email: decoded[
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
+      ],
+      roles,
+      token,
+    });
+  } catch {
+    localStorage.removeItem("token");
+    setUser(null);
+  }
+
+  setLoading(false);
+}, [token]);
+
 
   const login = (newToken) => {
     localStorage.setItem("token", newToken);
@@ -57,7 +60,6 @@ export function AuthProvider({ children }) {
   );
 }
 
-// ✅ THIS WAS MISSING
 export function useAuth() {
   return useContext(AuthContext);
 }
