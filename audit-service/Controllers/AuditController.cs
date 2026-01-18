@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;   
 using System.Security.Claims;
 using AuditService.Data;
 using AuditService.Models;
 using AuditService.DTOs;
+
 
 namespace AuditService.Controllers
 {
@@ -23,6 +25,8 @@ namespace AuditService.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateAuditLogDto dto)
         {
+            Console.WriteLine(">>> AUDIT CREATE HIT <<<");
+
             var auditLog = new AuditLog
             {
                 UserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
@@ -48,11 +52,15 @@ namespace AuditService.Controllers
 
         
         [Authorize(Roles = "Admin")]
-        [HttpGet]
-        public IActionResult GetAll()
-        {
-            return Ok(_context.AuditLogs
-                .OrderByDescending(x => x.Timestamp));
-        }
+[HttpGet]
+public async Task<IActionResult> GetAll()
+{
+    var logs = await _context.AuditLogs
+        .OrderByDescending(x => x.Timestamp)
+        .ToListAsync();
+
+    return Ok(logs);
+}
+
     }
 }

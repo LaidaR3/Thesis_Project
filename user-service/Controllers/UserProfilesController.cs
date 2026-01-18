@@ -4,24 +4,24 @@ using Microsoft.AspNetCore.Mvc;
 namespace User_Service.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class UserProfilesController : ControllerBase
+[Route("api/userprofiles")]
+public class UserProfilesController : ControllerBase
+{
+    [HttpGet]
+    [Authorize]
+    public IActionResult GetProfile()
     {
-        [HttpGet]
-        [Authorize]
-        public IActionResult GetProfile()
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
+        var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+
+        return Ok(new
         {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-            var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
-            var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
-
-            return Ok(new {
-                message = "Your user profile",
-                id = userId,
-                email = email,
-                role = role
-            });
-        }
+            id = userId,
+            email = email,
+            role = role
+        });
     }
+}
+
 }

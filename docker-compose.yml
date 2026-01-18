@@ -6,6 +6,7 @@ services:
     depends_on:
       - auth-service
       - audit-service
+      - user-service
     networks:
       - thesis-network
 
@@ -54,6 +55,20 @@ services:
       - "5433:5432"
     volumes:
       - auditdb_data:/var/lib/postgresql/data
+    networks:
+      - thesis-network
+
+  user-service:
+    build: ./user-service
+    ports:
+      - "5251:8080"
+    depends_on:
+      - auth-db
+    environment:
+      ConnectionStrings__Default: "Host=auth-db;Port=5432;Database=authdb;Username=laida;Password=laida123"
+      Jwt__Key: "J7h9PqL2sD4wE6rT8yU0iO3aS5dF7gH9jK1lZ3xC5vB7nM9qW2eR4tY6uI8oP0aS"
+      Jwt__Issuer: "auth-service"
+      Jwt__Audience: "api-gateway"
     networks:
       - thesis-network
 

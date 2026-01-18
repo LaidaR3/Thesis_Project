@@ -9,6 +9,8 @@ using auth_service.Models;
 using AuthService.Services;
 
 using AuthService.DTOs.Audit;
+using System.Net.Http.Headers;
+
 
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
@@ -107,12 +109,10 @@ public IActionResult Login(LoginDto dto)
     });
 }
 
-
-        private async void TryAudit(string action, string endpoint, string? metadata = null)
+private async Task TryAudit(string action, string endpoint, string? metadata = null)
 {
     try
     {
-        AttachServiceToken();
         await _audit.LogAsync(new CreateAuditLogDto
         {
             Action = action,
@@ -122,12 +122,10 @@ public IActionResult Login(LoginDto dto)
     }
     catch (Exception ex)
     {
-        // swallow on purpose
         Console.WriteLine($"[AUDIT FAILED] {ex.Message}");
     }
 }
 
-        
 
 
 
@@ -166,11 +164,10 @@ public async Task<IActionResult> CreateAdmin(CreateAdminDto dto)
 
     await _context.SaveChangesAsync();
 
-    AttachServiceToken();
     await _audit.LogAsync(new CreateAuditLogDto
     {
-        Action = "Admin Created",
-        TargetEndpoint = "/auth/create-admin",
+        Action = "ADMIN_CREATED",
+        TargetEndpoint = "/api/auth/create-admin",
         Metadata = $"CreatedBy={User.FindFirst(ClaimTypes.Email)?.Value}"
     });
 
@@ -187,11 +184,6 @@ public async Task<IActionResult> CreateAdmin(CreateAdminDto dto)
             return Ok(new { token });
         }
 
-        private void AttachServiceToken()
-        {
-            var serviceToken = _jwt.GenerateServiceToken("auth-service");
-
-            _audit.SetAuthorization(serviceToken);
-        }
+       
     }
 }

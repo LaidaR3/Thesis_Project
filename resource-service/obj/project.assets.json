@@ -803,8 +803,7 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      },
-      "SdkAnalysisLevel": "10.0.100"
+      }
     },
     "frameworks": {
       "net8.0": {
@@ -842,7 +841,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/10.0.100/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.416/PortableRuntimeIdentifierGraph.json"
       }
     }
   },
@@ -851,7 +850,7 @@
       "code": "NU1603",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "resource-service depends on Swashbuckle.AspNetCore (>= 8.0.1) but Swashbuckle.AspNetCore 8.0.1 was not found. Swashbuckle.AspNetCore 8.1.0 was resolved instead.",
+      "message": "resource-service depends on Swashbuckle.AspNetCore (>= 8.0.1) but Swashbuckle.AspNetCore 8.0.1 was not found. An approximate best match of Swashbuckle.AspNetCore 8.1.0 was resolved.",
       "libraryId": "Swashbuckle.AspNetCore",
       "targetGraphs": [
         "net8.0"

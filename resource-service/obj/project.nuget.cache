@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "lTwsr7SMKYk=",
+  "dgSpecHash": "Imw9Garm2PM=",
   "success": true,
   "projectFilePath": "/Users/laidarusinovci/Desktop/Tema e Diplomes/Thesis_Project/resource-service/resource-service.csproj",
   "expectedPackageFiles": [
@@ -24,10 +24,8 @@
     {
       "code": "NU1603",
       "level": "Warning",
-      "message": "resource-service depends on Swashbuckle.AspNetCore (>= 8.0.1) but Swashbuckle.AspNetCore 8.0.1 was not found. Swashbuckle.AspNetCore 8.1.0 was resolved instead.",
-      "projectPath": "/Users/laidarusinovci/Desktop/Tema e Diplomes/Thesis_Project/resource-service/resource-service.csproj",
       "warningLevel": 1,
-      "filePath": "/Users/laidarusinovci/Desktop/Tema e Diplomes/Thesis_Project/resource-service/resource-service.csproj",
+      "message": "resource-service depends on Swashbuckle.AspNetCore (>= 8.0.1) but Swashbuckle.AspNetCore 8.0.1 was not found. An approximate best match of Swashbuckle.AspNetCore 8.1.0 was resolved.",
       "libraryId": "Swashbuckle.AspNetCore",
       "targetGraphs": [
         "net8.0"

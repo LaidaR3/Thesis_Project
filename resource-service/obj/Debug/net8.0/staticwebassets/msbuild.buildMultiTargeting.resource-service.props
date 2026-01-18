@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../build/resource-service.props" />
+</Project>

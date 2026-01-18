@@ -1,1 +1,11 @@
-{"Version":1,"Hash":"KEYnigJuMiwJPKoICTolDFuXRg4O8qWgBg8i0R0TE6M=","Source":"resource-service","BasePath":"/","Mode":"Root","ManifestType":"Build","ReferencedProjectsConfiguration":[],"DiscoveryPatterns":[],"Assets":[],"Endpoints":[]}
+{
+  "Version": 1,
+  "Hash": "H9jOwjRLaMvfK/ooItTio6b+LscPFj0Ol01DEpVznZc=",
+  "Source": "resource-service",
+  "BasePath": "_content/resource-service",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

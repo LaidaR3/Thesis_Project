@@ -45,8 +45,9 @@ builder.Services.AddScoped<JwtService>();
 
 builder.Services.AddHttpClient<AuditClient>(client =>
 {
-    client.BaseAddress = new Uri("http://localhost:5077");
+     client.BaseAddress = new Uri("http://audit-service:8080");
 });
+
 
 var app = builder.Build();
 
