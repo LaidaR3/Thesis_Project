@@ -166,7 +166,7 @@ public async Task<IActionResult> CreateAdmin(CreateAdminDto dto)
 
     await _audit.LogAsync(new CreateAuditLogDto
     {
-        Action = "ADMIN_CREATED",
+        Action = "Admin Created",
         TargetEndpoint = "/api/auth/create-admin",
         Metadata = $"CreatedBy={User.FindFirst(ClaimTypes.Email)?.Value}"
     });

@@ -1,0 +1,28 @@
+.metric-card {
+  background: white;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.08);
+}
+
+.metric-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.metric-trend.up {
+  color: #16a34a;
+  font-size: 12px;
+}
+
+.metric-trend.down {
+  color: #dc2626;
+  font-size: 12px;
+}

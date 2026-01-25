@@ -3,6 +3,8 @@ import api from "../api/httpClient";
 import "./Login.css";
 import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { IoChevronBackCircleOutline } from "react-icons/io5";
+
 
 
 export default function CreateAdmin() {
@@ -30,7 +32,7 @@ export default function CreateAdmin() {
 
       alert("Admin created successfully");
 
-   
+
       navigate("/dashboard");
 
     } catch (error) {
@@ -41,6 +43,13 @@ export default function CreateAdmin() {
 
   return (
     <div className="login-page">
+      <button
+        className="back-bt"
+        onClick={() => navigate("/dashboard")}
+      >
+        <IoChevronBackCircleOutline />
+
+      </button>
       <div className="login-card">
         <h1>Create Admin</h1>
         <p className="subtitle">Add a new administrator</p>

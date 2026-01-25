@@ -1,13 +1,14 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/Logs";
 import RequireAuth from "./auth/RequireAuth";
 import RequireAdmin from "./auth/RequireAdmin";
 import Unauthorized from "./pages/Unauthorized";
 import Profile from "./pages/Profile";
 import CreateAdmin from "./pages/CreateAdmin";
 import Users from "./pages/Users";
+import ChartDashboard from "./pages/ChartDashboard";
 
 function App() {
   return (
@@ -49,6 +50,18 @@ function App() {
           </RequireAuth>
         }
       />
+
+      <Route
+        path="/charts"
+        element={
+          <RequireAuth>
+            <RequireAdmin>
+              <ChartDashboard />
+            </RequireAdmin>
+          </RequireAuth>
+        }
+      />
+
 
 
     </Routes>

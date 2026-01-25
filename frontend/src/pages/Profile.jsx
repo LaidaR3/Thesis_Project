@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../api/httpClient";
 import { useNavigate } from "react-router-dom";
 import "./Profile.css";
-
+import { IoChevronBackCircleOutline } from "react-icons/io5";
 export default function Profile() {
     const navigate = useNavigate();
 
@@ -16,7 +16,7 @@ export default function Profile() {
     useEffect(() => {
         const loadProfile = async () => {
             try {
-               
+
                 const profileRes = await api.get("/user/userprofiles");
                 setProfile(profileRes.data);
 
@@ -35,7 +35,7 @@ export default function Profile() {
         try {
             setSaving(true);
 
-           
+
             await api.put(`/auth/users/${profile.id}`, {
                 firstName,
                 lastName,
@@ -69,10 +69,11 @@ export default function Profile() {
                 <div className="profile-header">
                     <h1>My Profile</h1>
                     <button
-                        className="back-btn"
+                        className="back-bt"
                         onClick={() => navigate("/dashboard")}
                     >
-                        Back to Dashboard
+                        <IoChevronBackCircleOutline />
+
                     </button>
                 </div>
 

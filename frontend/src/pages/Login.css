@@ -1,10 +1,12 @@
 .login-page {
+  position: relative;
   min-height: 100vh;
   background: #f9f8f6;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 
 .login-card {
   background: white;
@@ -34,7 +36,7 @@
 }
 
 .login-card input {
-  width: 100%;
+  width: 400px;
   padding: 0.7rem 0.8rem;
   margin-bottom: 1.2rem;
   border-radius: 8px;
@@ -71,4 +73,33 @@
   color: #1f2d86;
   font-weight: 600;
   text-decoration: none;
+}
+
+
+.back-bt {
+  position: absolute; /* stays relative to .login-page */
+  top: 30px;
+  left: 30px;
+
+  background: transparent;
+  border: none;
+  cursor: pointer;
+
+  font-size: 2.5rem;
+  color: #1f2d86;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.back-bt:hover {
+  color: #18236a;
+  transform: translateX(-4px);
+}
+
+.back-bt:active {
+  transform: scale(0.95);
 }

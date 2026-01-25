@@ -27,7 +27,7 @@ export default function Sidebar() {
             </div>
 
             <nav className="sidebar-menu">
-                <NavLink to="/" className="menu-item">
+                <NavLink to="/charts" className="menu-item">
                     <span className="icon"><TbBrandGoogleAnalytics /></span>
                     <span>Dashboard</span>
                 </NavLink>

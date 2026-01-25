@@ -18,15 +18,30 @@
 
     {
       "UpstreamPathTemplate": "/gateway/audit",
-      "UpstreamHttpMethod": ["GET"],
+      "UpstreamHttpMethod": ["POST"],
       "DownstreamPathTemplate": "/api/audit",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "audit-service", "Port": 8080 }],
+      "DownstreamHostAndPorts": [
+        { "Host": "audit-service", "Port": 8080 }
+      ],
       "DownstreamHeaderTransform": {
-        "Authorization": "{Headers.Authorization}"
+        "Authorization": "{Headers.Authorization}",
+        "Content-Type": "application/json"
       }
     },
 
+    {
+  "UpstreamPathTemplate": "/gateway/audit",
+  "UpstreamHttpMethod": ["GET"],
+  "DownstreamPathTemplate": "/api/audit",
+  "DownstreamScheme": "http",
+  "DownstreamHostAndPorts": [
+    { "Host": "audit-service", "Port": 8080 }
+  ],
+  "DownstreamHeaderTransform": {
+    "Authorization": "{Headers.Authorization}"
+  }
+},
 
     {
       "UpstreamPathTemplate": "/gateway/user/userprofiles",

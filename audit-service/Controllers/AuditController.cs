@@ -21,11 +21,11 @@ namespace AuditService.Controllers
         }
 
       
-        [Authorize(Roles = "Service")]
+        [Authorize(Roles = "Admin,Service")]
         [HttpPost]
         public async Task<IActionResult> Create(CreateAuditLogDto dto)
         {
-            Console.WriteLine(">>> AUDIT CREATE HIT <<<");
+            Console.WriteLine(" AUDIT CREATE HIT ");
 
             var auditLog = new AuditLog
             {

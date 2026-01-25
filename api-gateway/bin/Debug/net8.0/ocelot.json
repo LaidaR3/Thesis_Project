@@ -16,17 +16,19 @@
       "DownstreamHostAndPorts": [{ "Host": "auth-service", "Port": 8080 }]
     },
 
-    {
-      "UpstreamPathTemplate": "/gateway/audit",
-      "UpstreamHttpMethod": ["GET"],
-      "DownstreamPathTemplate": "/api/audit",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "audit-service", "Port": 8080 }],
-      "DownstreamHeaderTransform": {
-        "Authorization": "{Headers.Authorization}"
-      }
-    },
-
+{
+  "UpstreamPathTemplate": "/gateway/audit",
+  "UpstreamHttpMethod": ["POST"],
+  "DownstreamPathTemplate": "/api/audit",
+  "DownstreamScheme": "http",
+  "DownstreamHostAndPorts": [
+    { "Host": "audit-service", "Port": 8080 }
+  ],
+  "DownstreamHeaderTransform": {
+    "Authorization": "{Headers.Authorization}",
+    "Content-Type": "application/json"
+  }
+},
 
     {
       "UpstreamPathTemplate": "/gateway/user/userprofiles",
@@ -53,17 +55,31 @@
 
 
     {
-  "DownstreamPathTemplate": "/api/auth/service-token",
-  "DownstreamScheme": "http",
-  "DownstreamHostAndPorts": [
+      "DownstreamPathTemplate": "/api/auth/service-token",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "auth-service",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/gateway/auth/service-token",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    
     {
-      "Host": "auth-service",
-      "Port": 8080
+      "UpstreamPathTemplate": "/gateway/auth/create-admin",
+      "UpstreamHttpMethod": ["POST"],
+      "DownstreamPathTemplate": "/api/auth/create-admin",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "auth-service", "Port": 8080 }
+      ],
+      "DownstreamHeaderTransform": {
+        "Authorization": "{Headers.Authorization}"
+      }
     }
-  ],
-  "UpstreamPathTemplate": "/gateway/auth/service-token",
-  "UpstreamHttpMethod": [ "POST" ]
-}
+    
 
   ],
   "GlobalConfiguration": {

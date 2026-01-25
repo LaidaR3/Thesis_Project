@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../api/httpClient";
 import { useAuth } from "../auth/AuthContext";
 import { useNavigate } from "react-router-dom";
-import "./Dashbaord.css";
+import "./Logs.css";
 import Sidebar from "../components/Sidebar";
 
 export default function Dashboard() {
@@ -65,14 +65,14 @@ export default function Dashboard() {
           onChange={(e) => setStatusFilter(e.target.value)}
         >
           <option value="">All statuses</option>
-          <option value="LOGIN_SUCCESS">Login Sucess</option>
-          <option value="LOGIN_FAILED_INVALID_CREDENTIALS">
+          <option value="Login Success">Login Sucess</option>
+          <option value="Login Failed - Invalid Credentials">
             Login Failed - Invalid Credentials
           </option>
-          <option value="LOGIN_FAILED_SYSTEM_ERROR">
+          <option value="Login Failed - System Error">
             Login Failed - System Error
           </option>
-          <option value="ADMIN_CREATED">Admin Created</option>
+          <option value="Admin Created">Admin Created</option>
         </select>
       </div>
 
