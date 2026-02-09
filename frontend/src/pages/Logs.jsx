@@ -73,6 +73,8 @@ export default function Dashboard() {
             Login Failed - System Error
           </option>
           <option value="Admin Created">Admin Created</option>
+          <option value="User Logged Out">User Logged Out</option>
+
         </select>
       </div>
 

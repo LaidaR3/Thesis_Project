@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import api from "../api/httpClient";
 
 const AuthContext = createContext(null);
 
@@ -47,10 +48,16 @@ useEffect(() => {
     setToken(newToken);
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    setToken(null);
-    setUser(null);
+  const logout = async () => {
+    try {
+      await api.post("/auth/logout");
+    } catch (err) {
+      console.error("Logout audit failed", err);
+    } finally {
+      localStorage.removeItem("token");
+      setToken(null);
+      setUser(null);
+    }
   };
 
   return (

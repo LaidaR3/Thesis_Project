@@ -14,10 +14,11 @@ export default function Sidebar() {
     const { logout, user } = useAuth();
     const navigate = useNavigate();
 
-    const handleLogout = () => {
-        logout();
+    const handleLogout = async () => {
+        await logout();
         navigate("/");
     };
+
 
     return (
         <aside className="sidebar">

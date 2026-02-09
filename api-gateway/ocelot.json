@@ -91,7 +91,21 @@
       "DownstreamHeaderTransform": {
         "Authorization": "{Headers.Authorization}"
       }
+    },
+
+    {
+      "UpstreamPathTemplate": "/gateway/auth/logout",
+      "UpstreamHttpMethod": ["POST"],
+      "DownstreamPathTemplate": "/api/auth/logout",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "auth-service", "Port": 8080 }
+      ],
+      "DownstreamHeaderTransform": {
+        "Authorization": "{Headers.Authorization}"
+      }
     }
+
     
 
   ],

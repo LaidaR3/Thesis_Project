@@ -10,12 +10,13 @@ import api from "../api/httpClient";
 
 import "./Chart.css";
 
-/* ✅ NORMALIZATION — TOP LEVEL */
+
 const normalizeResult = (result = "") => {
   const r = result.toLowerCase().trim();
 
   if (r.includes("login successfully")) return "Login Success";
   if (r.includes("login failed")) return "Login Failed";
+  if (r.includes("logged out")) return "User Logged Out";
   if (r.includes("admin created")) return "Admin Created";
   if (r.includes("register")) return "User Registered";
 
@@ -38,8 +39,13 @@ export default function ChartDashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  /* ✅ KPIs — USE NORMALIZED VALUES */
+
   const total = logs.length;
+
+  const logoutCount = logs.filter(
+    l => normalizeResult(l.result) === "User Logged Out"
+  ).length;
+
 
   const success = logs.filter(
     l => normalizeResult(l.result) === "Login Success"
@@ -60,7 +66,7 @@ export default function ChartDashboard() {
       <Sidebar />
 
       <div className="analytics-page">
-        {/* HEADER */}
+      
         <div className="analytics-header">
           <h1>Analytics</h1>
           <select>
@@ -69,7 +75,7 @@ export default function ChartDashboard() {
           </select>
         </div>
 
-        {/* METRICS */}
+       
         <div className="metrics-grid">
           <MetricCard title="Total Logs" value={total} />
           <MetricCard title="Login Success" value={success} color="#16a34a" />
@@ -78,7 +84,6 @@ export default function ChartDashboard() {
           <MetricCard title="Services" value={services} />
         </div>
 
-        {/* CHARTS */}
         <div className="charts-grid">
           <DashboardCard title="Logs by Result">
             <LogsByResultChart logs={logs} />
