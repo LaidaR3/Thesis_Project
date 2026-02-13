@@ -6,7 +6,7 @@ import {
   Tooltip,
 } from "recharts";
 
-const COLORS = ["#031A6B", "#0935d4ff", "#4a86ecff", "#005bb6ff", "#128ef3ff"];
+const COLORS = ["#031A6B", "#0935d4ff", "#275ebdff", "#005bb6ff", "#128ef3ff", "#a5ceefff"];
 
 export default function LogsByResultChart({ logs = [] }) {
   if (!logs.length) return <p className="empty">No data</p>;

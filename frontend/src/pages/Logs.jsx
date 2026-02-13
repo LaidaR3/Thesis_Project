@@ -29,93 +29,97 @@ export default function Dashboard() {
       (!statusFilter || log.result === statusFilter)
   );
 
-  
+
   const renderRoles = () => {
     if (!user?.roles) return "";
     if (Array.isArray(user.roles)) return user.roles.join(", ");
-    return user.roles; 
+    return user.roles;
   };
 
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
 
       <Sidebar />
-    <div className="dashboard" style={{ flex: 1 }}>
-      
-      <div className="dashboard-header">
-        <div>
-          <h1>Audit Logs</h1>
-          
+      <div className="dashboard" style={{ flex: 1 }}>
+
+        <div className="dashboard-header">
+          <div>
+            <h1>Audit Logs</h1>
+
+          </div>
+
+
         </div>
 
-      
-      </div>
+        <div className="dashboard-toolbar">
+          <input
+            className="search-input"
+            placeholder="Search endpoint..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
 
-      <div className="dashboard-toolbar">
-        <input
-          className="search-input"
-          placeholder="Search endpoint..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+          <select
+            className="status-filter"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="">All statuses</option>
+            <option value="Login Success">Login Sucess</option>
+            <option value="Login Failed - Invalid Credentials">
+              Login Failed - Invalid Credentials
+            </option>
+            <option value="Login Failed - System Error">
+              Login Failed - System Error
+            </option>
+            <option value="Admin Created">Admin Created</option>
+            <option value="User Logged Out">User Logged Out</option>
+            <option value="Access Denied - Insufficient Permissions">
+              Access Denied
+            </option>
 
-        <select
-          className="status-filter"
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-        >
-          <option value="">All statuses</option>
-          <option value="Login Success">Login Sucess</option>
-          <option value="Login Failed - Invalid Credentials">
-            Login Failed - Invalid Credentials
-          </option>
-          <option value="Login Failed - System Error">
-            Login Failed - System Error
-          </option>
-          <option value="Admin Created">Admin Created</option>
-          <option value="User Logged Out">User Logged Out</option>
 
-        </select>
-      </div>
+          </select>
+        </div>
 
-      {/* TABLE */}
-      <div className="table-wrapper">
-        <table className="audit-table">
-          <thead>
-            <tr>
-              <th>Endpoint</th>
-              <th>Actor</th>
-              <th>Service</th>
-              <th>Date</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {filteredLogs.map((log) => (
-              <tr
-                key={log.id}
-                className={`row-${log.result?.toLowerCase()}`}
-              >
-                <td>{log.endpoint}</td>
-                <td>{log.email ?? log.userId ?? "Service"}</td>
-                <td>{log.serviceName}</td>
-                <td>{new Date(log.timestamp).toLocaleString()}</td>
-                <td>{log.result}</td>
-              </tr>
-            ))}
-
-            {filteredLogs.length === 0 && (
+        {/* TABLE */}
+        <div className="table-wrapper">
+          <table className="audit-table">
+            <thead>
               <tr>
-                <td colSpan="5" style={{ textAlign: "center", padding: "20px" }}>
-                  No logs found
-                </td>
+                <th>Endpoint</th>
+                <th>Actor</th>
+                <th>Service</th>
+                <th>Date</th>
+                <th>Status</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {filteredLogs.map((log) => (
+                <tr
+                  key={log.id}
+                  className={`row-${log.result?.toLowerCase()}`}
+                >
+                  <td>{log.endpoint}</td>
+                  <td>{log.email ?? log.userId ?? "Service"}</td>
+                  <td>{log.serviceName}</td>
+                  <td>{new Date(log.timestamp).toLocaleString()}</td>
+                  <td>{log.result}</td>
+                </tr>
+              ))}
+
+              {filteredLogs.length === 0 && (
+                <tr>
+                  <td colSpan="5" style={{ textAlign: "center", padding: "20px" }}>
+                    No logs found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
     </div>
   );
 }

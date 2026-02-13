@@ -19,6 +19,7 @@ const normalizeResult = (result = "") => {
   if (r.includes("logged out")) return "User Logged Out";
   if (r.includes("admin created")) return "Admin Created";
   if (r.includes("register")) return "User Registered";
+  if (r.includes("access denied")) return "Access Denied";
 
   return "Other";
 };
@@ -59,6 +60,11 @@ export default function ChartDashboard() {
     l => normalizeResult(l.result) === "Admin Created"
   ).length;
 
+  const accessDenied = logs.filter(
+    l => normalizeResult(l.result) === "Access Denied"
+  ).length;
+
+
   const services = new Set(logs.map(l => l.serviceName)).size;
 
   return (
@@ -66,7 +72,7 @@ export default function ChartDashboard() {
       <Sidebar />
 
       <div className="analytics-page">
-      
+
         <div className="analytics-header">
           <h1>Analytics</h1>
           <select>
@@ -75,11 +81,12 @@ export default function ChartDashboard() {
           </select>
         </div>
 
-       
+
         <div className="metrics-grid">
           <MetricCard title="Total Logs" value={total} />
           <MetricCard title="Login Success" value={success} color="#16a34a" />
           <MetricCard title="Login Failed" value={failed} color="#dc2626" />
+          <MetricCard title="Access Denied" value={accessDenied} color="#f59e0b" />
           <MetricCard title="Admin Actions" value={admin} />
           <MetricCard title="Services" value={services} />
         </div>
